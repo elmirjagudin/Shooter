@@ -105,6 +105,7 @@ public class NPC : MonoBehaviour
         }
 
         gameObject.transform.position += dir * MoveSpeed * Time.deltaTime;
+        gameObject.transform.rotation = Quaternion.LookRotation(dir);
 
         return MoveModes.ToBase;
     }
@@ -122,6 +123,7 @@ public class NPC : MonoBehaviour
         }
 
         gameObject.transform.position += dir * MoveSpeed * Time.deltaTime;
+        gameObject.transform.rotation = Quaternion.LookRotation(dir);
 
         return MoveModes.ToPlayer;
     }

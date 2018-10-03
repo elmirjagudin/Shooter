@@ -5,7 +5,7 @@ using UnityEngine;
 public class Base : MonoBehaviour
 {
     public GameObject Player;
-    public NPC NPC;
+    public NPC[] NPC;
     public GameObject[] SpawnPoints;
     public float SpawnRate = 4f;
     public int MaxNPCs = 8;
@@ -17,7 +17,9 @@ public class Base : MonoBehaviour
     void SpawnNewNPC()
     {
         var pos = SpawnPoints[Random.Range(0, SpawnPoints.Length)].transform.position;
-        var npc = Instantiate(NPC, pos, Quaternion.identity);
+        var npcPrefab = NPC[Random.Range(0, NPC.Length)];
+
+        var npc = Instantiate(npcPrefab, pos, Quaternion.identity);
         npc.Activate(Player, gameObject, NPCKilled, PlayerHit);
 
         NPCsSpawned += 1;
