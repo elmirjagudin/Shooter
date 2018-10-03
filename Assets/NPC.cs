@@ -55,6 +55,8 @@ public class NPC : MonoBehaviour
                 MoveMode = Attack();
                 break;
         }
+
+        CheckPlayerHit();
 	}
 
     void GetDirectionDistanceTo(GameObject go, out Vector3 direction, out float distance)
@@ -69,6 +71,28 @@ public class NPC : MonoBehaviour
         direction = moveDir.normalized;
     }
 
+    void CheckPlayerHit()
+    {
+        Vector3 dir;
+        float distance;
+
+        GetDirectionDistanceTo(Player, out dir, out distance);
+
+        if (distance > PlayerDistance)
+        {
+            /* no hit */
+            return;
+        }
+
+        var now = Time.time;
+        if (now >= nextHit)
+        {
+            PlayerHit();
+            nextHit = now + HitRate;
+        }
+
+    }
+
     MoveModes MoveToBase()
     {
         Vector3 dir;
@@ -81,7 +105,6 @@ public class NPC : MonoBehaviour
         }
 
         gameObject.transform.position += dir * MoveSpeed * Time.deltaTime;
-
 
         return MoveModes.ToBase;
     }
@@ -113,13 +136,6 @@ public class NPC : MonoBehaviour
         if (distance >= PlayerDistance)
         {
             return MoveModes.ToPlayer;
-        }
-
-        var now = Time.time;
-        if (now >= nextHit)
-        {
-            PlayerHit();
-            nextHit = now + HitRate;
         }
 
         return MoveModes.Attack;
