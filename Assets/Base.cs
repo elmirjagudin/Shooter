@@ -9,13 +9,16 @@ public class Base : MonoBehaviour
     public GameObject[] SpawnPoints;
     public float SpawnRate = 4f;
     public int MaxNPCs = 8;
-    public int NPCsSpawned = 0;
+
+    int NPCsSpawned = 0;
+    int PlayerHealth = 20;
+
 
     void SpawnNewNPC()
     {
         var pos = SpawnPoints[Random.Range(0, SpawnPoints.Length)].transform.position;
         var npc = Instantiate(NPC, pos, Quaternion.identity);
-        npc.Activate(Player, gameObject, NPCKilled);
+        npc.Activate(Player, gameObject, NPCKilled, PlayerHit);
 
         NPCsSpawned += 1;
     }
@@ -34,8 +37,19 @@ public class Base : MonoBehaviour
 
     void NPCKilled()
     {
-        print("fatality");
         NPCsSpawned -= 1;
+    }
+
+    void PlayerHit()
+    {
+        PlayerHealth -= 1;
+
+        Debug.LogFormat("health {0}", PlayerHealth);
+
+        if (PlayerHealth <= 0)
+        {
+            print("game over");
+        }
     }
 
 	void Start()

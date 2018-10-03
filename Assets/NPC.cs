@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class NPC : MonoBehaviour
 {
+    const float HitRate = 1.5f; /* hits per second */
     const float MoveSpeed = 2f;
     const float BaseDistance = 1f;
     const float PlayerDistance = 3f;
@@ -12,6 +13,8 @@ public class NPC : MonoBehaviour
     GameObject Base;
 
     int Health = 3;
+
+    float nextHit = 0;
 
     enum MoveModes
     {
@@ -22,15 +25,18 @@ public class NPC : MonoBehaviour
 
     MoveModes MoveMode = MoveModes.ToBase;
 
-    public delegate void KilledCB();
-    KilledCB Killed;
+    public delegate void Callback();
+    Callback Killed;
+    Callback PlayerHit;
 
 
-    public void Activate(GameObject Player, GameObject Base, KilledCB Killed)
+    public void Activate(GameObject Player, GameObject Base,
+                         Callback Killed, Callback PlayerHit)
     {
         this.Player = Player;
         this.Base = Base;
         this.Killed = Killed;
+        this.PlayerHit = PlayerHit;
 
         gameObject.SetActive(true);
     }
@@ -107,6 +113,13 @@ public class NPC : MonoBehaviour
         if (distance >= PlayerDistance)
         {
             return MoveModes.ToPlayer;
+        }
+
+        var now = Time.time;
+        if (now >= nextHit)
+        {
+            PlayerHit();
+            nextHit = now + HitRate;
         }
 
         return MoveModes.Attack;
