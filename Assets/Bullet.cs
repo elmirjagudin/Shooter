@@ -12,7 +12,6 @@ public class Bullet : MonoBehaviour
         Destroy(this.gameObject, LifeTime);
 	}
 
-	// Update is called once per frame
 	void Update ()
     {
         var t = gameObject.transform;
