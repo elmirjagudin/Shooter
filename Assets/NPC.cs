@@ -140,12 +140,15 @@ public class NPC : MonoBehaviour
             return MoveModes.ToPlayer;
         }
 
+        gameObject.GetComponent<Animator>().SetTrigger("attack");
         return MoveModes.Attack;
     }
 
     void OnTriggerEnter(Collider other)
     {
         Health -= 1;
+
+        gameObject.GetComponent<Animator>().SetTrigger("hit");
 
         if (Health <= 0)
         {
