@@ -4,13 +4,15 @@ using UnityEngine;
 
 public class Weapon : MonoBehaviour
 {
+    public GameObject BulletOrigin;
     public GameObject Bullet;
+
 
     bool Firing = false;
 
     IEnumerator Fire()
     {
-        var t = gameObject.transform;
+        var t = BulletOrigin.gameObject.transform;
 
         while (Input.GetMouseButton(0))
         {
