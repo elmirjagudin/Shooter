@@ -16,18 +16,21 @@ public class NPC : MonoBehaviour
     GameObject Player;
     GameObject Base;
 
-    int Health = 3;
+    int Health = 2;
 
     float nextHit = 0;
+    float unfreezTime = 0;
 
     enum MoveModes
     {
         ToBase,
         ToPlayer,
+        Frozen,
         Attack,
     };
 
     MoveModes MoveMode = MoveModes.ToBase;
+    MoveModes PrevMoveMode;
 
     public delegate void Callback();
     Callback Killed;
@@ -57,6 +60,9 @@ public class NPC : MonoBehaviour
                 break;
             case MoveModes.ToPlayer:
                 MoveMode = MoveToPlayer();
+                break;
+            case MoveModes.Frozen:
+                MoveMode = Frozen();
                 break;
             case MoveModes.Attack:
                 MoveMode = Attack();
@@ -153,15 +159,35 @@ public class NPC : MonoBehaviour
         return MoveModes.Attack;
     }
 
+    MoveModes Frozen()
+    {
+        if (Time.time < unfreezTime)
+        {
+            return MoveModes.Frozen;
+        }
+
+        return PrevMoveMode;
+    }
+
+    void Freeze()
+    {
+        unfreezTime = Time.time + 1.2f;
+        PrevMoveMode = MoveMode;
+        MoveMode = MoveModes.Frozen;
+    }
+
     void OnTriggerEnter(Collider other)
     {
         Health -= 1;
+        Freeze();
 
         if (Health <= 0)
         {
+            GetComponent<Collider>().isTrigger = false;
+
             Killed();
             Sound.PlayOneShot(DeadSfx);
-            Destroy(this.gameObject, 1f);
+            Destroy(this.gameObject, 0.2f);
             return;
         }
 

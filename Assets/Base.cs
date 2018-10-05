@@ -10,9 +10,9 @@ public class Base : MonoBehaviour
     public float SpawnRate = 4f;
     public int MaxNPCs = 8;
 
-    int NPCsSpawned = 0;
+    int NPCsActive = 0;
+    int NPCsKilled = 0;
     int PlayerHealth = 20;
-
 
     void SpawnNewNPC()
     {
@@ -22,24 +22,33 @@ public class Base : MonoBehaviour
         var npc = Instantiate(npcPrefab, pos, Quaternion.identity);
         npc.Activate(Player, gameObject, NPCKilled, PlayerHit);
 
-        NPCsSpawned += 1;
+        NPCsActive += 1;
     }
+
+    int MaxActiveNPCs()
+    {
+        var toSpawn = NPCsKilled / 4 + 1;
+
+        return System.Math.Min(toSpawn, MaxNPCs);
+    }
+
 
     IEnumerator Spawn()
     {
         while (true)
         {
-            if (NPCsSpawned < MaxNPCs)
+            if (NPCsActive < MaxActiveNPCs())
             {
                 SpawnNewNPC();
             }
-            yield return new WaitForSeconds(SpawnRate);
+            yield return new WaitForSeconds(Random.value * SpawnRate);
         }
     }
 
     void NPCKilled()
     {
-        NPCsSpawned -= 1;
+        NPCsActive -= 1;
+        NPCsKilled += 1;
     }
 
     void PlayerHit()

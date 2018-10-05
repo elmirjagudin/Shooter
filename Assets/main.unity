@@ -225,8 +225,8 @@ MonoBehaviour:
   - {fileID: 1930977999}
   - {fileID: 1596909028}
   - {fileID: 770123839}
-  SpawnRate: 4
-  MaxNPCs: 8
+  SpawnRate: 2
+  MaxNPCs: 12
 --- !u!1 &641235371
 GameObject:
   m_ObjectHideFlags: 0
