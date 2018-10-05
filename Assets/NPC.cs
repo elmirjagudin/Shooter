@@ -9,6 +9,10 @@ public class NPC : MonoBehaviour
     const float BaseDistance = 1f;
     const float PlayerDistance = 3f;
 
+    public AudioClip HitSfx;
+    public AudioClip AttackSfx;
+    public AudioClip DeadSfx;
+
     GameObject Player;
     GameObject Base;
 
@@ -29,6 +33,7 @@ public class NPC : MonoBehaviour
     Callback Killed;
     Callback PlayerHit;
 
+    AudioSource Sound;
 
     public void Activate(GameObject Player, GameObject Base,
                          Callback Killed, Callback PlayerHit)
@@ -37,6 +42,8 @@ public class NPC : MonoBehaviour
         this.Base = Base;
         this.Killed = Killed;
         this.PlayerHit = PlayerHit;
+
+        Sound = gameObject.AddComponent<AudioSource>();
 
         gameObject.SetActive(true);
     }
@@ -87,7 +94,10 @@ public class NPC : MonoBehaviour
         var now = Time.time;
         if (now >= nextHit)
         {
+            gameObject.GetComponent<Animator>().SetTrigger("attack");
+            Sound.PlayOneShot(AttackSfx);
             PlayerHit();
+
             nextHit = now + HitRate;
         }
 
@@ -140,7 +150,6 @@ public class NPC : MonoBehaviour
             return MoveModes.ToPlayer;
         }
 
-        gameObject.GetComponent<Animator>().SetTrigger("attack");
         return MoveModes.Attack;
     }
 
@@ -148,12 +157,15 @@ public class NPC : MonoBehaviour
     {
         Health -= 1;
 
-        gameObject.GetComponent<Animator>().SetTrigger("hit");
-
         if (Health <= 0)
         {
             Killed();
-            Destroy(this.gameObject);
+            Sound.PlayOneShot(DeadSfx);
+            Destroy(this.gameObject, 1f);
+            return;
         }
+
+        gameObject.GetComponent<Animator>().SetTrigger("hit");
+        Sound.PlayOneShot(HitSfx);
     }
 }

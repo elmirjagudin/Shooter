@@ -13,10 +13,12 @@ public class Weapon : MonoBehaviour
     IEnumerator Fire()
     {
         var t = BulletOrigin.gameObject.transform;
+        var sound = GetComponent<AudioSource>();
 
         while (Input.GetMouseButton(0))
         {
             Instantiate(Bullet, t.position, t.rotation * Bullet.transform.rotation);
+            sound.Play();
             yield return new WaitForSeconds(0.2f);
         }
 
